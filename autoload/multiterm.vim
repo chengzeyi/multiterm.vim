@@ -6,6 +6,13 @@ if exists('s:loaded')
 endif
 let s:loaded = 1
 
+let s:term_buf_active_count = 0
+
+let s:term_buf_active_counts = []
+for i in range(10)
+    call add(s:term_buf_active_counts, 0)
+endfor
+
 if !exists(':terminal')
     echoerr 'Multiterm needs NeoVim or Vim with terminal support'
     finish
@@ -37,7 +44,19 @@ function! s:get_term_tag(tag) abort
             return a:tag
         endif
     else
-        return a:tag == 0 ? 1 : a:tag
+        if a:tag == 0
+            let term_tag = 0
+            let term_buf_active_count = 0
+            for i in range(1, 10)
+                if exists('s:term_buf_' . i) && bufexists(s:['term_buf_' . i]) && s:term_buf_active_counts[i] > term_buf_active_count
+                    let term_tag = i
+                    let term_buf_active_count = s:term_buf_active_counts[i]
+                endif
+            endfor
+            return term_tag == 0 ? 1 : term_tag
+        else
+            return a:tag
+        endif
     endif
 endfunction
 
@@ -74,6 +93,8 @@ if has('nvim')
             elseif get(s:, 'term_tmode_' . term_tag, 0) && mode() !=# 't'
                 startinsert
             endif
+            let s:term_buf_active_count += 1
+            let s:term_buf_active_counts[term_tag] = s:term_buf_active_count
         else
             call nvim_win_close(s:['term_win_' . term_tag], v:false)
             let s:['term_tmode_' . term_tag] = a:tmode
@@ -144,6 +165,8 @@ else
             if get(s:, 'term_tmode_' . term_tag, 0) && mode() !=# 't'
                 normal! i
             endif
+            let s:term_buf_active_count += 1
+            let s:term_buf_active_counts[term_tag] = s:term_buf_active_count
         else 
             call popup_close(s:['term_win_' . term_tag])
             let s:['term_tmode_' . term_tag] = a:tmode

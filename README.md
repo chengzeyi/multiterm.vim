@@ -32,7 +32,7 @@ endif
 
 If you do not have any floating terminal instance, run `:Multiterm [cmd]` will create a floating terminal with tag `1`. It is not suggested to run a non-interactive `cmd` as the terminal session will end and get destroyed as soon as `cmd` finishes if run `:Multiterm` without `!`.
 
-If your cursor is in a floating terminal window, run `:Multiterm` will close that window and put the terminal session into background. Otherwise the tag `1` floating terminal instance will be toggled.
+If your cursor is in a floating terminal window, run `:Multiterm` will close that window and put the terminal session into background. Otherwise the **least recently used** floating terminal instance will be activated.
 
 If you run `:3Multiterm` and do not have a floating terminal with tag `3` created, a new floating terminal window with tag `3` will be created and become the current active floating window.
 
