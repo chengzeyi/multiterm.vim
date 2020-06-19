@@ -84,9 +84,10 @@ if has('nvim')
             call setwinvar(s:['term_win_' . term_tag], '_multiterm_term_tag', term_tag)
             exe 'augroup MultitermBuffer' . term_tag
             exe 'autocmd!'
-            exe 'au WinLeave * ++once call nvim_win_close(' . s:['term_win_' . term_tag] . ', v:false)'
+            exe 'au WinLeave * ++once if win_id2tabwin(' . s:['term_win_' . term_tag] . ') != [0, 0] | call nvim_win_close(' . s:['term_win_' . term_tag] . ', v:true) | endif'
             exe 'au WinLeave * ++once if bufexists(' . border_buf . ') | bwipeout ' . border_buf . ' | endif'
-            exe 'au BufWipeout <buffer> if win_id2tabwin(' . s:['term_win_' . term_tag] . ') != [0, 0] | call nvim_win_close(' . s:['term_win_' . term_tag] . ', v:false) | endif'
+            exe 'au BufWipeout <buffer> if win_id2tabwin(' . s:['term_win_' . term_tag] . ') != [0, 0] | call nvim_win_close(' . s:['term_win_' . term_tag] . ', v:true) | endif'
+            exe 'au BufWipeout <buffer> if bufexists(' . border_buf . ') | bwipeout ' . border_buf . ' | endif'
             exe 'augroup END'
             if need_termopen
                 call termopen(a:0 == 0 || empty(a:1) ? &shell : a:1, {'on_exit': function(a:no_close ? 'multiterm#on_term_exit_no_close' : 'multiterm#on_term_exit')})
