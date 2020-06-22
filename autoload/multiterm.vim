@@ -84,10 +84,10 @@ if has('nvim')
             call setwinvar(s:['term_win_' . term_tag], '_multiterm_term_tag', term_tag)
             exe 'augroup MultitermBuffer' . term_tag
             exe 'autocmd!'
-            exe 'au WinLeave * ++once if win_id2tabwin(' . s:['term_win_' . term_tag] . ') != [0, 0] | call nvim_win_close(' . s:['term_win_' . term_tag] . ', v:true) | endif'
-            exe 'au WinLeave * ++once if bufexists(' . border_buf . ') | bwipeout ' . border_buf . ' | endif'
+            exe 'au WinLeave * ++once if bufexists(' . border_buf . ') | bwipeout! ' . border_buf . ' | endif'
+            exe 'au WinLeave * ++once if win_id2tabwin(' . s:['term_win_' . term_tag] . ') != [0, 0] | call nvim_win_close(' . s:['term_win_' . term_tag] . ', v:true) | let s:term_tmode_' . term_tag . ' = 0 | endif'
+            exe 'au BufWipeout <buffer> if bufexists(' . border_buf . ') | bwipeout! ' . border_buf . ' | endif'
             exe 'au BufWipeout <buffer> if win_id2tabwin(' . s:['term_win_' . term_tag] . ') != [0, 0] | call nvim_win_close(' . s:['term_win_' . term_tag] . ', v:true) | endif'
-            exe 'au BufWipeout <buffer> if bufexists(' . border_buf . ') | bwipeout ' . border_buf . ' | endif'
             exe 'augroup END'
             if need_termopen
                 call termopen(a:0 == 0 || empty(a:1) ? &shell : a:1, {'on_exit': function(a:no_close ? 'multiterm#on_term_exit_no_close' : 'multiterm#on_term_exit')})
@@ -97,7 +97,7 @@ if has('nvim')
             let s:term_buf_active_count += 1
             let s:term_buf_active_counts[term_tag] = s:term_buf_active_count
         else
-            call nvim_win_close(s:['term_win_' . term_tag], v:false)
+            call nvim_win_close(s:['term_win_' . term_tag], v:true)
             let s:['term_tmode_' . term_tag] = a:tmode
         endif
     endfunction
@@ -116,6 +116,7 @@ if has('nvim')
         let border_buf = nvim_create_buf(v:false, v:true)
         call nvim_buf_set_lines(border_buf, 0, -1, v:true, lines)
         let win = nvim_open_win(border_buf, v:true, opts)
+        call setbufvar(border_buf, '&bufhidden', 'wipe')
         call setwinvar(win, '&winhighlight', 'NormalFloat:' . g:multiterm_opts.border_hl)
         return border_buf
     endfunction
