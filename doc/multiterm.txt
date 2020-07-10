@@ -35,7 +35,7 @@ non-interactive [cmd] as the terminal session will end and get destroyed as
 soon as [cmd] finishes if you run :Multiterm without '!'.
 
 If your cursor is in a floating terminal window, run :Multiterm will close
-that window and put the terminal session into background. Otherwise the least
+that window and put the terminal session into background. Otherwise the most
 recently used floating terminal instance will be toggled.
 
 If you run :3Multiterm and do not have a floating terminal with tag '3'
