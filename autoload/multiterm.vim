@@ -7,6 +7,7 @@ endif
 let s:loaded = 1
 
 let s:term_buf_active_count = 0
+let s:winnr_before = 0
 
 let s:term_buf_active_counts = []
 for i in range(10)
@@ -72,6 +73,7 @@ if has('nvim')
         let col = eval(g:multiterm_opts.col)
         let opts = {'relative': 'editor', 'row': row, 'col': col, 'width': width, 'height': height, 'style': 'minimal'}
         if !exists('s:term_win_' . term_tag) || !nvim_win_is_valid(s:['term_win_' . term_tag])
+            let s:winnr_before = winnr()
             let border_buf = s:create_float_border(opts)
             if !exists('s:term_buf_' . term_tag) || !bufexists(s:['term_buf_' . term_tag])
                 let s:['term_buf_' . term_tag] = nvim_create_buf(v:false, v:false)
@@ -99,6 +101,7 @@ if has('nvim')
         else
             call nvim_win_close(s:['term_win_' . term_tag], v:true)
             let s:['term_tmode_' . term_tag] = a:tmode
+            exe s:winnr_before . 'wincmd w'
         endif
     endfunction
 
@@ -147,6 +150,7 @@ else
             call setbufvar(s:['term_buf_' . term_tag], '&buflisted', 0)
         endif
         if !exists('s:term_win_' . term_tag) || empty(popup_getoptions(s:['term_win_' . term_tag]))
+            let s:winnr_before = winnr()
             let height = eval(g:multiterm_opts.height)
             let width = eval(g:multiterm_opts.width)
             let row = eval(g:multiterm_opts.row)
@@ -172,6 +176,7 @@ else
         else 
             call popup_close(s:['term_win_' . term_tag])
             let s:['term_tmode_' . term_tag] = a:tmode
+            exe s:winnr_before . 'wincmd w'
         endif
     endfunction
 endif
