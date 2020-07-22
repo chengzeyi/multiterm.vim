@@ -72,7 +72,7 @@ if has('nvim')
         let col = eval(g:multiterm_opts.col)
         let opts = {'relative': 'editor', 'row': row, 'col': col, 'width': width, 'height': height, 'style': 'minimal'}
         if !exists('s:term_win_' . term_tag) || !nvim_win_is_valid(s:['term_win_' . term_tag])
-            let border_buf = s:create_float_border(opts)
+            let border_buf = s:create_float_border(term_tag, opts)
             if !exists('s:term_buf_' . term_tag) || !bufexists(s:['term_buf_' . term_tag])
                 let s:['term_buf_' . term_tag] = nvim_create_buf(v:false, v:false)
                 let need_termopen = 1
@@ -102,14 +102,18 @@ if has('nvim')
         endif
     endfunction
 
-    function! s:create_float_border(opts) abort
+    function! s:create_float_border(tag, opts) abort
         let opts = copy(a:opts)
         let opts.row -= 1
         let opts.col -= 1
         let opts.height += 2
         let opts.width += 2
         let bcs = g:multiterm_opts.border_chars
-        let top = bcs[4] . repeat(bcs[0], opts.width - 2) . bcs[5]
+        if g:multiterm_opts.show_term_tag && opts.width >= 4
+            let top = bcs[4] . bcs[0] . a:tag . repeat(bcs[0], opts.width - 4) . bcs[5]
+        else
+            let top = bcs[4] . repeat(bcs[0], opts.width - 2) . bcs[5]
+        endif
         let mid = bcs[3] . repeat(' ', opts.width - 2) . bcs[1]
         let bot = bcs[7] . repeat(bcs[2], opts.width - 2) . bcs[6]
         let lines = [top] + repeat([mid], opts.height - 2) + [bot]

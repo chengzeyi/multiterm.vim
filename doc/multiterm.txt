@@ -122,6 +122,9 @@ g:multiterm_opts.border_chars                  *g:multiterm_opts.border_chars*
     Set the border filling characters of the multiterm floating window.
     [top, right, bottom, left, top_left, top_right, bottom_right, bottom_left]
 
+g:multiterm_opts.show_term_tag                *g:multiterm_opts.show_term_tag*
+    Show the terminal tag on the top boarder on NeoVim.
+
 g:multiterm_opts.term_hl                            *g:multiterm_opts.term_hl*
     Set the highlight group of Normal stuff in the multiterm floating
     window.

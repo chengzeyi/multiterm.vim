@@ -78,6 +78,7 @@ let g:multiterm_opts = {
             \ 'col': '(&columns - width) / 2',
             \ 'border_hl': 'Comment',
             \ 'border_chars': ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
+            \ 'show_term_tag': 1,
             \ 'term_hl': 'Normal'
             \ }
 " Your configuration should start here
