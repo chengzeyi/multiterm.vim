@@ -37,7 +37,10 @@ function! s:get_term_tag(tag) abort
             return w:_multiterm_term_tag
         else
             if has('nvim')
-                call nvim_win_close(s:['term_win_' . w:_multiterm_term_tag], v:false)
+                call nvim_win_close(s:['term_win_' . w:_multiterm_term_tag], v:true)
+                if exists('s:term_last_win_' . term_tag)
+                    exe 'silent! ' . s:['term_last_win_' . term_tag] . 'wincmd w'
+                endif
             else
                 call popup_close(s:['term_win_' . w:_multiterm_term_tag])
             endif
@@ -72,6 +75,7 @@ if has('nvim')
         let col = eval(g:multiterm_opts.col)
         let opts = {'relative': 'editor', 'row': row, 'col': col, 'width': width, 'height': height, 'style': 'minimal'}
         if !exists('s:term_win_' . term_tag) || !nvim_win_is_valid(s:['term_win_' . term_tag])
+            let s:['term_last_win_' . term_tag] = winnr()
             let border_buf = s:create_float_border(term_tag, opts)
             if !exists('s:term_buf_' . term_tag) || !bufexists(s:['term_buf_' . term_tag])
                 let s:['term_buf_' . term_tag] = nvim_create_buf(v:false, v:false)
@@ -98,6 +102,9 @@ if has('nvim')
             let s:term_buf_active_counts[term_tag] = s:term_buf_active_count
         else
             call nvim_win_close(s:['term_win_' . term_tag], v:true)
+            if exists('s:term_last_win_' . term_tag)
+                exe 'silent! ' . s:['term_last_win_' . term_tag] . 'wincmd w'
+            endif
             let s:['term_tmode_' . term_tag] = a:tmode
         endif
     endfunction
@@ -109,8 +116,8 @@ if has('nvim')
         let opts.height += 2
         let opts.width += 2
         let bcs = g:multiterm_opts.border_chars
-        if g:multiterm_opts.show_term_tag && opts.width >= 4
-            let top = bcs[4] . bcs[0] . a:tag . repeat(bcs[0], opts.width - 4) . bcs[5]
+        if g:multiterm_opts.show_term_tag && opts.width >= 5 && a:tag != 1
+            let top = bcs[4] . '[' . a:tag . ']' . repeat(bcs[0], opts.width - 5) . bcs[5]
         else
             let top = bcs[4] . repeat(bcs[0], opts.width - 2) . bcs[5]
         endif
