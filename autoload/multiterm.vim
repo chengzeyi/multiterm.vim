@@ -2,7 +2,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 if exists('s:loaded')
-    finish
+    " finish
 endif
 let s:loaded = 1
 
@@ -50,7 +50,7 @@ function! s:get_term_tag(tag) abort
         if a:tag == 0
             let term_tag = 0
             let term_buf_active_count = 0
-            for i in range(1, 10)
+            for i in range(1, 9)
                 if exists('s:term_buf_' . i) && bufexists(s:['term_buf_' . i]) && s:term_buf_active_counts[i] > term_buf_active_count
                     let term_tag = i
                     let term_buf_active_count = s:term_buf_active_counts[i]
@@ -186,6 +186,28 @@ else
         endif
     endfunction
 endif
+
+function! multiterm#status() abort
+    let term_tag = 0
+    let term_buf_active_count = 0
+    let status = ''
+    for i in range(1, 9)
+        if exists('s:term_buf_' . i) && bufexists(s:['term_buf_' . i])
+            let status .= '='
+            if s:term_buf_active_counts[i] > term_buf_active_count
+                let term_tag = i
+                let term_buf_active_count = s:term_buf_active_counts[i]
+            endif
+        else
+            let status .= '-'
+        endif
+    endfor
+    if term_tag == 0
+        let term_tag = 1
+    endif
+    let status = strpart(status, 0, term_tag - 1) . '^' . strpart(status, term_tag)
+    return status
+endfunction
 
 let &cpo = s:cpo_save
 unlet s:cpo_save
