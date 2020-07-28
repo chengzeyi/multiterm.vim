@@ -2,7 +2,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 if exists('s:loaded')
-    " finish
+    finish
 endif
 let s:loaded = 1
 
