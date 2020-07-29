@@ -2,7 +2,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 if exists('s:loaded')
-    finish
+    " finish
 endif
 let s:loaded = 1
 
@@ -37,6 +37,7 @@ function! s:get_term_tag(tag) abort
             return w:_multiterm_term_tag
         else
             if has('nvim')
+                let term_tag = w:_multiterm_term_tag
                 call nvim_win_close(s:['term_win_' . w:_multiterm_term_tag], v:true)
                 if exists('s:term_last_win_' . term_tag)
                     exe 'silent! ' . s:['term_last_win_' . term_tag] . 'wincmd w'
