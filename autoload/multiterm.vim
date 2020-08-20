@@ -2,7 +2,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 if exists('s:loaded')
-    " finish
+    finish
 endif
 let s:loaded = 1
 
@@ -149,6 +149,7 @@ else
             return
         endif
         if !exists('s:term_buf_' . term_tag) || !bufexists(s:['term_buf_' . term_tag])
+            let new_term = 1
             let s:['term_buf_' . term_tag] = term_start(a:0 == 0 || empty(a:1) ? &shell : a:1, extend({
                         \ 'hidden': 1,
                         \ 'norestore': 1,
@@ -157,6 +158,8 @@ else
                         \ }, a:no_close ? {} : {'term_finish': 'close'}))
             " exe 'autocmd BufWipeout <buffer=' . s:term_buf . '> ++once call term_sendkeys(' . s:term_buf . ', "exit\<cr>")'
             call setbufvar(s:['term_buf_' . term_tag], '&buflisted', 0)
+        else
+            let new_term = 0
         endif
         if !exists('s:term_win_' . term_tag) || empty(popup_getoptions(s:['term_win_' . term_tag]))
             let height = eval(g:multiterm_opts.height)
@@ -176,12 +179,19 @@ else
                         \ 'borderchars': g:multiterm_opts.border_chars
                         \ })
             call setwinvar(s:['term_win_' . term_tag], '_multiterm_term_tag', term_tag)
-            if get(s:, 'term_tmode_' . term_tag, 0) && mode() !=# 't'
-                normal! i
+            if !new_term
+                if get(s:, 'term_tmode_' . term_tag, 0) && mode() !=# 't'
+                    normal! i
+                else
+                    if get(s:, 'term_line_' . term_tag, 0)
+                        silent! exe s:['term_line_' . term_tag] . ' | normal! zz'
+                    endif
+                endif
             endif
             let s:term_buf_active_count += 1
             let s:term_buf_active_counts[term_tag] = s:term_buf_active_count
         else 
+            let s:['term_line_' . term_tag] = line('.', s:['term_win_' . term_tag])
             call popup_close(s:['term_win_' . term_tag])
             let s:['term_tmode_' . term_tag] = a:tmode
         endif
