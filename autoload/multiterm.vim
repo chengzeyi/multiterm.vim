@@ -2,7 +2,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 if exists('s:loaded')
-    finish
+    " finish
 endif
 let s:loaded = 1
 
@@ -129,7 +129,7 @@ if has('nvim')
         call nvim_buf_set_lines(border_buf, 0, -1, v:true, lines)
         let win = nvim_open_win(border_buf, v:true, opts)
         call setbufvar(border_buf, '&bufhidden', 'wipe')
-        call setwinvar(win, '&winhighlight', 'NormalFloat:' . g:multiterm_opts.border_hl)
+        call setwinvar(win, '&winhighlight', 'NormalNC:' . g:multiterm_opts.border_hl . ',NormalFloat:' . g:multiterm_opts.border_hl)
         return border_buf
     endfunction
 
