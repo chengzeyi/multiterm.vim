@@ -107,6 +107,10 @@ if has('nvim')
                 exe 'silent! ' . s:['term_last_win_' . term_tag] . 'wincmd w'
             endif
             let s:['term_tmode_' . term_tag] = a:tmode
+            exe 'augroup MultitermBuffer' . term_tag
+            exe 'autocmd!'
+            exe 'augroup END'
+            exe 'augroup! MultitermBuffer' . term_tag
         endif
     endfunction
 
