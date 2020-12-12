@@ -25,16 +25,16 @@ call extend(g:multiterm_opts, s:multiterm_default_opts, 'keep')
 
 command! -nargs=* -complete=shellcmd -count -bang Multiterm call multiterm#toggle_float_term(<count>, <bang>0, 0, <q-args>)
 
-nnoremap <silent> <Plug>(Multiterm) :<C-u>call multiterm#toggle_float_term(v:count, 0, 0)<Cr>
-xnoremap <silent> <Plug>(Multiterm) :<C-u>call multiterm#toggle_float_term(v:count, 0, 0)<Cr>
-inoremap <silent> <Plug>(Multiterm) <C-o>:<C-u>call multiterm#toggle_float_term(v:count, 0, 0)<Cr>
+nnoremap <silent> <Plug>(Multiterm) :<c-u>call multiterm#toggle_float_term(v:count, 0, 0)<cr>
+vnoremap <silent> <Plug>(Multiterm) :<c-u>call multiterm#toggle_float_term(v:count, 0, 0)<cr>
+inoremap <silent> <Plug>(Multiterm) <c-o>:<c-u>call multiterm#toggle_float_term(v:count, 0, 0)<cr>
 if has('nvim')
-    tnoremap <silent> <Plug>(Multiterm) <C-\><C-n>:<C-u>call multiterm#toggle_float_term(v:count, 0, 1)<Cr>
+    tnoremap <silent> <Plug>(Multiterm) <c-\><c-n>:<c-u>call multiterm#toggle_float_term(v:count, 0, 1)<cr>
 else
-    if empty(&termwinkey) || &termwinkey =~? '\V<c-w>'
-        tnoremap <silent> <Plug>(Multiterm) <C-w>:<C-u>call multiterm#toggle_float_term(v:count, 0, 0)<Cr>
+    if empty(&termwinkey) || &termwinkey ==? '<c-w>'
+        tnoremap <silent> <Plug>(Multiterm) <c-w>:<c-u>call multiterm#toggle_float_term(v:count, 0, 0)<cr>
     else
-        tnoremap <silent> <Plug>(Multiterm) <C-\><C-n>:<C-u>call multiterm#toggle_float_term(v:count, 0, 1)<Cr>
+        tnoremap <silent> <Plug>(Multiterm) <c-\><c-n>:<c-u>call multiterm#toggle_float_term(v:count, 0, 1)<cr>
     endif
 endif
 
