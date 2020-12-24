@@ -11,7 +11,7 @@ let s:multiterm_default_opts = {
             \ 'width': 'float2nr(&columns * 0.8)',
             \ 'row': '(&lines - height) / 2',
             \ 'col': '(&columns - width) / 2',
-            \ 'border_hl': 'Ignore',
+            \ 'border_hl': 'Comment',
             \ 'border_chars': ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
             \ 'show_term_tag': 1,
             \ 'term_hl': 'Normal'
