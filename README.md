@@ -10,6 +10,10 @@ You might often need to open several terminal sessions in Vim. Let's suppose you
 
 With **Multiterm**, all pains just go off. You could use one single command `:Multiterm` and mapping `<Plug>(Multiterm)` with **count** to **create**, **hide** and **display** the floating terminal window you want.
 
+## Screenshot
+
+[Screenshot](https://i.postimg.cc/d0s17Pmn/2021-02-14-14-02-23.png)
+
 ## Prerequisites
 
 Running `:echo has('nvim-0.4.0') || has('patch-8.2.191')` prints `1`, which means that you have at least version 0.4.0 of NeoVim or version 8.2.191 of Vim.
