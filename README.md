@@ -12,7 +12,7 @@ With **Multiterm**, all pains just go off. You could use one single command `:Mu
 
 ## Screenshot
 
-[Screenshot](https://i.postimg.cc/d0s17Pmn/2021-02-14-14-02-23.png)
+![Screenshot](https://i.postimg.cc/d0s17Pmn/2021-02-14-14-02-23.png)
 
 ## Prerequisites
 
