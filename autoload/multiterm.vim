@@ -2,7 +2,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 if exists('s:loaded')
-    " finish
+    finish
 endif
 let s:loaded = 1
 
@@ -12,6 +12,10 @@ let s:term_buf_active_counts = []
 for i in range(10)
     call add(s:term_buf_active_counts, 0)
 endfor
+
+if has('nvim')
+    let s:job_id_2_buf = {}
+endif
 
 if !exists(':terminal')
     echoerr 'Multiterm needs NeoVim or Vim with terminal support'
@@ -95,7 +99,10 @@ if has('nvim')
             exe 'au BufWipeout <buffer> if win_id2tabwin(' . s:['term_win_' . term_tag] . ') != [0, 0] | call nvim_win_close(' . s:['term_win_' . term_tag] . ', v:true) | endif'
             exe 'augroup END'
             if need_termopen
-                call termopen(a:0 == 0 || empty(a:1) ? &shell : a:1, {'on_exit': function(a:no_close ? 'multiterm#on_term_exit_no_close' : 'multiterm#on_term_exit')})
+                let job_id = termopen(a:0 == 0 || empty(a:1) ? &shell : a:1, {'on_exit': function(a:no_close ? 'multiterm#on_term_exit_no_close' : 'multiterm#on_term_exit')})
+                if job_id > 0
+                    let s:job_id_2_buf[job_id] = s:['term_buf_' . term_tag]
+                endif
             elseif get(s:, 'term_tmode_' . term_tag, 0) && mode() !=# 't'
                 startinsert
             endif
@@ -139,7 +146,10 @@ if has('nvim')
 
     function! multiterm#on_term_exit(job_id, code, event) abort dict
         if a:code == 0
-            bwipeout!
+            let buf = get(s:job_id_2_buf, a:job_id, -1)
+            if buf > 0
+                exe buf . 'bwipeout!'
+            endif
         endif
     endfunction
 
@@ -194,7 +204,7 @@ else
             endif
             let s:term_buf_active_count += 1
             let s:term_buf_active_counts[term_tag] = s:term_buf_active_count
-        else 
+        else
             let s:['term_line_' . term_tag] = line('.', s:['term_win_' . term_tag])
             call popup_close(s:['term_win_' . term_tag])
             let s:['term_tmode_' . term_tag] = a:tmode
@@ -205,22 +215,25 @@ endif
 function! multiterm#status() abort
     let term_tag = 0
     let term_buf_active_count = 0
-    let status = ''
+    let status = {
+                \ 'active': [],
+                \ 'inactive': []
+                \ }
     for i in range(1, 9)
         if exists('s:term_buf_' . i) && bufexists(s:['term_buf_' . i])
-            let status .= '='
+            let status['active'] += [i]
             if s:term_buf_active_counts[i] > term_buf_active_count
                 let term_tag = i
                 let term_buf_active_count = s:term_buf_active_counts[i]
             endif
         else
-            let status .= '-'
+            let status['inactive'] += [i]
         endif
     endfor
     if term_tag == 0
         let term_tag = 1
     endif
-    let status = strpart(status, 0, term_tag - 1) . '^' . strpart(status, term_tag)
+    let status['default'] = term_tag
     return status
 endfunction
 
