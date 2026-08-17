@@ -169,7 +169,10 @@ else
                         \ 'norestore': 1,
                         \ 'term_kill': 'kill',
                         \ 'term_highlight': g:multiterm_opts.term_hl
-                        \ }, a:no_close ? {} : {'term_finish': 'close'}))
+                        \ }, a:no_close ? {} : {
+                        \ 'term_finish': 'close',
+                        \ 'exit_cb': function('s:on_term_exit', [term_tag])
+                        \ }))
             " exe 'autocmd BufWipeout <buffer=' . s:term_buf . '> ++once call term_sendkeys(' . s:term_buf . ', "exit\<cr>")'
             call setbufvar(s:['term_buf_' . term_tag], '&buflisted', 0)
         else
@@ -208,6 +211,19 @@ else
             let s:['term_line_' . term_tag] = line('.', s:['term_win_' . term_tag])
             call popup_close(s:['term_win_' . term_tag])
             let s:['term_tmode_' . term_tag] = a:tmode
+        endif
+    endfunction
+
+    function! s:on_term_exit(term_tag, job, status) abort
+        if a:status == 0
+            let win = get(s:, 'term_win_' . a:term_tag, -1)
+            if win > 0 && !empty(popup_getoptions(win))
+                call popup_close(win)
+            endif
+            let buf = get(s:, 'term_buf_' . a:term_tag, -1)
+            if buf > 0
+                exe buf . 'bwipeout!'
+            endif
         endif
     endfunction
 endif
